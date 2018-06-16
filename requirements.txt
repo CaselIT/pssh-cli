@@ -4,5 +4,6 @@
 # foo == 1.42
 # Min version:
 # bar >= 2.42
+colorama>=0.3.9 
 parallel-ssh>=1.7.0
 pyyaml>=3.12
