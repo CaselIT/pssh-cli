@@ -10,7 +10,7 @@ from utils import Log
 
 
 class Runner:
-    def __init__(self, timeout, log: Log, hostNames=None, hostFile=None, quiet=False):
+    def __init__(self, timeout, log: Log, hostNames=None, hostFile=None, quiet=False, only=[]):
         if hostFile and hostNames:
             raise ValueError('Cannot specify both "hostNames" and "hostFile"')
         elif hostNames:
@@ -22,6 +22,11 @@ class Runner:
                 list(self.hostConfig.keys()), host_config=self.hostConfig, timeout=timeout)
         else:
             raise ValueError('One of "hostNames" or "hostFile" is required')
+        if only:
+            for host in list(self.client.hosts):
+                if str(host) in only or self._hostName(host) in only:
+                    continue
+                self.client.hosts.remove(host)
         self.quiet = quiet
         self.log = log
         self.pool = ThreadPoolExecutor()

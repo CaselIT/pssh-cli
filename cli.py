@@ -17,8 +17,13 @@ def getCli():
     parser.add_argument(
         '-s',
         '--sudo',
-        help='Execute command as sudo. Ignore when a commandFile is used',
+        help='Execute command as sudo. Ignored when a commandFile is used',
         action='store_true')
     parser.add_argument('-t', '--timeout', help='Timeout for the commands', type=float, default=10)
     parser.add_argument('--noColour', help='Disable colour output', action='store_true')
+    parser.add_argument(
+        '-o',
+        '--only',
+        help='Only use the the hosts in this list. Useful with commandFile',
+        nargs='+')
     return parser

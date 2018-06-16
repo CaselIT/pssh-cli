@@ -9,7 +9,12 @@ from utils import Log
 def main(args):
     log = Log(not args.noColour)
     runner = Runner(
-        args.timeout, log, hostNames=args.hostNames, hostFile=args.hostFile, quiet=args.quiet)
+        args.timeout,
+        log,
+        hostNames=args.hostNames,
+        hostFile=args.hostFile,
+        quiet=args.quiet,
+        only=args.only)
 
     if args.command:
         runner.runCommand(args.command, args.sudo)
