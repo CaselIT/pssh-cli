@@ -17,6 +17,7 @@ def getHostConfig(fileToParse) -> dict:
         raise ValueError('"hosts" key is missing or empty')
 
     default = config.get('default', {})
+    default.setdefault('sudoRequiresPassword', True)
     if not isinstance(default, dict):
         raise TypeError('"default" key must be an object')
     hostConfig = {}
@@ -41,7 +42,8 @@ _example = {
         'user': 'username (str)',
         'password': 'password to use (str)',
         'port': 'port (int)',
-        'sudoRequiresPassword': 'if sudo requires sending the password (bool)'
+        'sudoRequiresPassword': 'if sudo requires sending the password. default true (bool)',
+        'name': 'optional name of the host to use when logging (str)'
     },
     'hosts': [{
         'host': 'host name. Required',
