@@ -1,0 +1,8 @@
+# Packages required by the application and installed by pip. 
+# Specify a version number as
+# Exact version:
+# foo == 1.42
+# Min version:
+# bar >= 2.42
+parallel-ssh>=1.7.0
+pyyaml>=3.12
