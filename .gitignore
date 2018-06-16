@@ -102,3 +102,4 @@ ENV/
 cSpell.json
 
 *.yaml
+*.yml
