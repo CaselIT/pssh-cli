@@ -12,7 +12,7 @@ class CustomString(str):
 
 
 def getHostConfig(fileToParse) -> dict:
-    config: dict = yaml.load(fileToParse)
+    config: dict = yaml.safe_load(fileToParse)
     if not config.get('hosts'):
         raise ValueError('"hosts" key is missing or empty')
 

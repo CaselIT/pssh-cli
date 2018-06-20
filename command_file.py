@@ -16,7 +16,7 @@ class Command:
 
 
 def getCommands(fileToParse) -> List[Command]:
-    commands: dict = yaml.load(fileToParse)
+    commands: dict = yaml.safe_load(fileToParse)
     if not commands.get('commands'):
         raise ValueError('"commands" key if missing of empty')
 
