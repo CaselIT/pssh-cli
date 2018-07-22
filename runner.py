@@ -1,5 +1,5 @@
 from colorama import Fore
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, wait
 from pssh.clients import ParallelSSHClient
 from pssh.output import HostOutput
 from typing import List, Dict
@@ -79,9 +79,12 @@ class Runner:
                                f'[{self._hostName(host)}]'.ljust(self.justification + 2))
 
     def _logCommand(self, output: Dict[str, HostOutput]):
+        futures = []
         for hostOutput in output.values():
-            self.pool.submit(self._logSingleOutput, hostOutput, error=False)
-            self.pool.submit(self._logSingleOutput, hostOutput, error=True)
+            f = self.pool.submit(self._logHostOutput, hostOutput)
+            futures.append(f)
+
+        wait(futures)
 
     def _print(self, host, line, isError=False):
         if isError:
@@ -90,7 +93,8 @@ class Runner:
         fn = self.log.error if isError else self.log.print
         fn(text)
 
-    def _logSingleOutput(self, hostOutput: HostOutput, error):
-        lines = hostOutput.stderr if error else hostOutput.stdout
-        for line in lines:
-            self._print(hostOutput.host, line, error)
+    def _logHostOutput(self, hostOutput: HostOutput):
+        for line in hostOutput.stdout:
+            self._print(hostOutput.host, line, False)
+        for line in hostOutput.stderr:
+            self._print(hostOutput.host, line, True)

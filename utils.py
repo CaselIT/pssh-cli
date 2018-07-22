@@ -25,9 +25,7 @@ class Log:
         return string
 
     def print(self, *args):
-        self.lock.acquire()
-        print(*args, file=self.stdout)
-        self.lock.release()
+        self._syncPrint(*args, file=self.stdout)
 
     def __call__(self, *args):
         return self.print(*args)
@@ -35,9 +33,11 @@ class Log:
     def error(self, *args):
         if any(self._SUDO_MSG in part for part in args):
             return
-        self.lock.acquire()
-        print(*args, file=self.stderr)
-        self.lock.release()
+        self._syncPrint(*args, file=self.stderr)
+
+    def _syncPrint(self, *args, **kwargs):
+        with self.lock:
+            print(*args, **kwargs)
 
 
 _initCalled = False
