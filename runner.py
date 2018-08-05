@@ -35,15 +35,16 @@ class Runner:
 
     def runCommand(self, command, sudo, consumeOutput=None, logExit=True):
         consumeOutput = not self.quiet if consumeOutput is None else consumeOutput
-        output = self.client.run_command(command, sudo=sudo)
+        output = self.client.run_command(command, sudo=sudo, stop_on_errors=False)
         if sudo and self.hostConfig:
             for host in output:
                 if (self.hostConfig[host].get('sudoRequiresPassword', False)
                         and self.hostConfig[host].get('password', False)):
                     stdin = output[host].stdin
-                    pwd = self.hostConfig[host]['password']
-                    stdin.write(f'{pwd}\n')
-                    stdin.flush()
+                    if stdin:
+                        pwd = self.hostConfig[host]['password']
+                        stdin.write(f'{pwd}\n')
+                        stdin.flush()
         if consumeOutput:
             self._logCommand(output)
         self.client.join(output, consume_output=True)
@@ -63,6 +64,11 @@ class Runner:
                     if hostOutput.exit_code:
                         text = (f'command {command.name} exited with error {hostOutput.exit_code}.',
                                 'No further commands will be executed.')
+                        self._print(host, text, True)
+                        self.client.hosts.remove(host)
+                    if hostOutput.exception:
+                        text = (f'command {command.name} exited with exception'
+                                f'{hostOutput.exception}.No further commands will be executed.')
                         self._print(host, text, True)
                         self.client.hosts.remove(host)
 
